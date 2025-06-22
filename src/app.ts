@@ -1,13 +1,15 @@
 import { buildApplication, buildRouteMap } from "@stricli/core";
 import { buildInstallCommand, buildUninstallCommand } from "@stricli/auto-complete";
-import { name, version, description } from "../package.json";
+import { version, description } from "../package.json";
 import { upCommand } from "./commands/up/command";
+import { projectRoutes } from "./commands/project/commands";
 
 const routes = buildRouteMap({
     routes: {
         up: upCommand,
-        install: buildInstallCommand("flame-cli", { bash: "__flame-cli_bash_complete" }),
-        uninstall: buildUninstallCommand("flame-cli", { bash: true }),
+        project: projectRoutes,
+        install: buildInstallCommand("flame", { bash: "__flame-cli_bash_complete" }),
+        uninstall: buildUninstallCommand("flame", { bash: true }),
     },
     docs: {
         brief: description,
@@ -19,7 +21,7 @@ const routes = buildRouteMap({
 });
 
 export const app = buildApplication(routes, {
-    name,
+    name: "flame",
     versionInfo: {
         currentVersion: version,
     },
