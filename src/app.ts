@@ -1,13 +1,11 @@
 import { buildApplication, buildRouteMap } from "@stricli/core";
 import { buildInstallCommand, buildUninstallCommand } from "@stricli/auto-complete";
 import { name, version, description } from "../package.json";
-import { subdirCommand } from "./commands/subdir/command";
-import { nestedRoutes } from "./commands/nested/commands";
+import { upCommand } from "./commands/up/command";
 
 const routes = buildRouteMap({
     routes: {
-        subdir: subdirCommand,
-        nested: nestedRoutes,
+        up: upCommand,
         install: buildInstallCommand("flame-cli", { bash: "__flame-cli_bash_complete" }),
         uninstall: buildUninstallCommand("flame-cli", { bash: true }),
     },

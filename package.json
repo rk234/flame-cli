@@ -1,10 +1,10 @@
 {
     "name": "flame-cli",
     "author": "",
-    "description": "Stricli command line application",
+    "description": "A simple CLI to interact with firestore databases",
     "license": "MIT",
     "type": "module",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "files": [
         "dist"
     ],
@@ -35,8 +35,9 @@
         "minify": true
     },
     "dependencies": {
+        "@stricli/auto-complete": "^1.1.2",
         "@stricli/core": "^1.1.2",
-        "@stricli/auto-complete": "^1.1.2"
+        "firebase-admin": "^13.4.0"
     },
     "devDependencies": {
         "@types/node": "22.x",
