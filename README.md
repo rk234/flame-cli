@@ -11,8 +11,25 @@ A simple, developer-friendly CLI for interacting with Firebase Firestore databas
 
 ## Installation
 
+### From npm
+
 ```bash
 npm install -g flame-cli
+```
+
+### From Source
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/flame-cli.git
+cd flame-cli
+
+# Install dependencies and build
+npm install
+npm run build
+
+# Link globally
+npm link
 ```
 
 **Requirements:** Node.js >= 22
@@ -165,13 +182,13 @@ flame down users | grep "active"
 
 ## Shell Autocompletion
 
-Install bash completion:
+After installation, you can optionally enable bash completion:
 
 ```bash
 flame install
 ```
 
-Uninstall:
+This adds autocompletion for commands, flags, and arguments. To uninstall:
 
 ```bash
 flame uninstall
@@ -192,6 +209,23 @@ npm run build
 
 # Run locally
 node dist/cli.js --help
+
+# Or link globally for development
+npm link
+flame --help
+```
+
+### Running Tests
+
+```bash
+# Run tests once
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
 ```
 
 ## Tech Stack

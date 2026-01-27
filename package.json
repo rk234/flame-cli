@@ -9,8 +9,8 @@
     "dist"
   ],
   "bin": {
-    "flame-cli": "dist/cli.js",
-    "__flame-cli_bash_complete": "dist/bash-complete.js"
+    "flame": "dist/cli.js",
+    "__flame_bash_complete": "dist/bash-complete.js"
   },
   "engines": {
     "node": ">=22"
@@ -20,7 +20,6 @@
     "build": "tsup",
     "build:watch": "tsup --watch",
     "prepublishOnly": "npm run build",
-    "postinstall": "flame-cli install",
     "prepare": "husky",
     "format": "prettier . --write",
     "test": "vitest run",
