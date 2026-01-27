@@ -103,10 +103,6 @@ flame down users/abc123/orders
 
 Upload documents to Firestore from JSON input.
 
-### `flame project list` (Coming Soon)
-
-List available Firebase projects.
-
 ## Configuration
 
 Flame uses three configuration sources:
@@ -121,6 +117,7 @@ Flame uses three configuration sources:
 
 ```json
 {
+  "project": "my-firebase-project",
   "useEmulator": false,
   "emulatorHost": "127.0.0.1",
   "emulatorPort": 8080
