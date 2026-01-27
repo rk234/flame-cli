@@ -15,12 +15,6 @@ export const downCommand = buildCommand({
       ],
     },
     flags: {
-      format: {
-        kind: "enum",
-        brief: "Output format",
-        values: ["json", "table"],
-        default: "json",
-      },
       limit: {
         kind: "parsed",
         brief: "Maximum number of documents to return (for collections)",
@@ -29,7 +23,6 @@ export const downCommand = buildCommand({
       },
     },
     aliases: {
-      f: "format",
       l: "limit",
     },
   },

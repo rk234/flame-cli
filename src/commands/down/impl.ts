@@ -3,12 +3,10 @@ import { logger } from "../../services/logger";
 import {
   formatDocument,
   formatDocuments,
-  type OutputFormat,
   type DocumentData,
 } from "../../services/formatter";
 
 interface DownFlags {
-  format: OutputFormat;
   limit?: number;
 }
 
@@ -25,10 +23,10 @@ export default async function down(
   flags: DownFlags,
   path: string,
 ) {
-  const { format } = flags;
-  const firestore = this.getFirestore();
-
+  const { limit } = flags;
   try {
+    const firestore = this.getFirestore();
+
     if (isDocumentPath(path)) {
       // Fetch single document
       const docRef = firestore.doc(path);
@@ -44,12 +42,13 @@ export default async function down(
         data: docSnap.data() ?? {},
       };
 
-      const output = formatDocument(doc, format);
+      const output = formatDocument(doc);
       this.process.stdout.write(output + "\n");
     } else {
       // Fetch collection
       const collectionRef = firestore.collection(path);
       let query = collectionRef.orderBy("__name__");
+      if (limit) query.limit(limit);
 
       if (flags.limit) {
         query = query.limit(flags.limit);
@@ -68,7 +67,7 @@ export default async function down(
       }));
 
       logger.info(`Found ${docs.length} document(s) in ${path}`);
-      const output = formatDocuments(docs, format);
+      const output = formatDocuments(docs);
       this.process.stdout.write(output + "\n");
     }
   } catch (error) {

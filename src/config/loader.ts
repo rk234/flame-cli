@@ -54,7 +54,10 @@ export function writeConfig(dir: string, config: FlameConfig) {
 export function loadFirebaseConfig(cwd: string): FirebaseConfig {
   if (firebaseConfig) return firebaseConfig;
   const firebasercPath = findFileUpward(cwd, ".firebaserc");
-  if (!firebasercPath) throw new Error("No firebaserc file found!");
+  if (!firebasercPath)
+    throw new Error(
+      "No firebaserc file found! Make sure to execute this command in a firebase project directory.",
+    );
   const firebasercFile = readFileSync(firebasercPath);
   const firebaseRc = JSON.parse(firebasercFile.toString()) as FirebaseRC;
 
@@ -66,7 +69,9 @@ export function loadFirebaseConfig(cwd: string): FirebaseConfig {
 
   const firebaseJsonPath = findFileUpward(cwd, "firebase.json");
   if (!firebaseJsonPath) {
-    throw new Error("No firebase.json file found!");
+    throw new Error(
+      "No firebase.json file found! Make sure to execute this command in a firebase project directory.",
+    );
   }
 
   const firebaseJSONFile = readFileSync(firebaseJsonPath);
