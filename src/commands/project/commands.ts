@@ -1,8 +1,9 @@
 import { buildCommand, buildRouteMap } from "@stricli/core";
+import { logger } from "../../services/logger";
 
 export const listCommand = buildCommand({
   docs: { brief: "Lists registered projects" },
-  func: () => console.log("List"),
+  func: () => logger.info("Listing registered projects..."),
   parameters: {},
 });
 

@@ -6,9 +6,16 @@ import {
 import { version, description } from "../package.json";
 import { upCommand } from "./commands/up/command";
 import { projectRoutes } from "./commands/project/commands";
+import { statusCommand } from "./commands/status/command";
+import { initCommand } from "./commands/init/command";
+import { useCommand } from "./commands/use/command";
+import chalk from "chalk";
 
 const routes = buildRouteMap({
   routes: {
+    init: initCommand,
+    status: statusCommand,
+    use: useCommand,
     up: upCommand,
     project: projectRoutes,
     install: buildInstallCommand("flame", {
@@ -17,7 +24,7 @@ const routes = buildRouteMap({
     uninstall: buildUninstallCommand("flame", { bash: true }),
   },
   docs: {
-    brief: description,
+    brief: `🔥 ${chalk.bold.hex("#FFA500")("FLAME")} ${chalk.greenBright(`v${version}`)}\n${description}`,
     hideRoute: {
       install: true,
       uninstall: true,

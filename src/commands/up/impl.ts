@@ -1,3 +1,6 @@
+import { logger } from "../../services/logger";
+
 export default function up() {
-  console.log("Hello World!");
+  logger.info("Starting upload...");
+  logger.success("Upload complete!");
 }
