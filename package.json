@@ -1,47 +1,53 @@
 {
-    "name": "flame-cli",
-    "author": "",
-    "description": "A simple CLI to interact with firestore databases",
-    "license": "MIT",
-    "type": "module",
-    "version": "0.1.0",
-    "files": [
-        "dist"
+  "name": "flame-cli",
+  "author": "",
+  "description": "A simple CLI to interact with firestore databases",
+  "license": "MIT",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "flame-cli": "dist/cli.js",
+    "__flame-cli_bash_complete": "dist/bash-complete.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "prebuild": "tsc -p src/tsconfig.json",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "prepublishOnly": "npm run build",
+    "postinstall": "flame-cli install",
+    "prepare": "husky",
+    "format": "prettier . --write"
+  },
+  "tsup": {
+    "entry": [
+      "src/bin/cli.ts",
+      "src/bin/bash-complete.ts"
     ],
-    "bin": {
-        "flame-cli": "dist/cli.js",
-        "__flame-cli_bash_complete": "dist/bash-complete.js"
-    },
-    "engines": {
-        "node": ">=22"
-    },
-    "scripts": {
-        "prebuild": "tsc -p src/tsconfig.json",
-        "build": "tsup",
-        "prepublishOnly": "npm run build",
-        "postinstall": "flame-cli install"
-    },
-    "tsup": {
-        "entry": [
-            "src/bin/cli.ts",
-            "src/bin/bash-complete.ts"
-        ],
-        "format": [
-            "esm"
-        ],
-        "tsconfig": "src/tsconfig.json",
-        "clean": true,
-        "splitting": true,
-        "minify": true
-    },
-    "dependencies": {
-        "@stricli/auto-complete": "^1.1.2",
-        "@stricli/core": "^1.1.2",
-        "firebase-admin": "^13.4.0"
-    },
-    "devDependencies": {
-        "@types/node": "22.x",
-        "tsup": "^6.7.0",
-        "typescript": "5.6.x"
-    }
+    "format": [
+      "esm"
+    ],
+    "tsconfig": "src/tsconfig.json",
+    "clean": true,
+    "splitting": true,
+    "minify": true
+  },
+  "dependencies": {
+    "@stricli/auto-complete": "^1.1.2",
+    "@stricli/core": "^1.1.2",
+    "chalk": "^5.6.2",
+    "firebase-admin": "^13.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.x",
+    "husky": "^9.1.7",
+    "prettier": "^3.8.1",
+    "tsup": "^6.7.0",
+    "typescript": "5.6.x"
+  }
 }
