@@ -22,7 +22,10 @@
     "prepublishOnly": "npm run build",
     "postinstall": "flame-cli install",
     "prepare": "husky",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "tsup": {
     "entry": [
@@ -49,6 +52,7 @@
     "husky": "^9.1.7",
     "prettier": "^3.8.1",
     "tsup": "^6.7.0",
-    "typescript": "5.6.x"
+    "typescript": "5.6.x",
+    "vitest": "^4.0.18"
   }
 }
