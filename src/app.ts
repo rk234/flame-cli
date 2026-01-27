@@ -5,6 +5,7 @@ import {
 } from "@stricli/auto-complete";
 import { version, description } from "../package.json";
 import { upCommand } from "./commands/up/command";
+import { downCommand } from "./commands/down/command";
 import { projectRoutes } from "./commands/project/commands";
 import { statusCommand } from "./commands/status/command";
 import { initCommand } from "./commands/init/command";
@@ -17,6 +18,7 @@ const routes = buildRouteMap({
     status: statusCommand,
     use: useCommand,
     up: upCommand,
+    down: downCommand,
     project: projectRoutes,
     install: buildInstallCommand("flame", {
       bash: "__flame-cli_bash_complete",

@@ -34,7 +34,7 @@ export default async function init(this: LocalContext) {
   );
   logger.warn("Will create config file at " + process.cwd());
 
-  const useEmulator = await logger.prompt("Default to firestore emulator?", {
+  const useEmulator = await logger.prompt("Default to Firestore emulator?", {
     type: "confirm",
   });
   const project = await logger.prompt("Firebase project ID:", { type: "text" });

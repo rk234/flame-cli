@@ -15,12 +15,26 @@ const levelMap: Record<LogLevel, number> = {
   debug: 5, // + trace
 };
 
+// Log levels that should be suppressed in non-interactive mode
+// Level 0 = fatal/error, Level 1 = warn, Level 2 = log, Level 3 = info/success/etc.
+const INTERACTIVE_ONLY_MIN_LEVEL = 1; // Suppress warn (1) and above, keep fatal/error (0)
+
 /**
- * Custom reporter wrapper that removes extra newlines from badge-style logs
+ * Custom reporter wrapper that:
+ * 1. Removes extra newlines from badge-style logs
+ * 2. Suppresses non-critical messages when stdout is not a TTY (piped)
  */
 function createCompactReporter(baseReporter: ConsolaReporter): ConsolaReporter {
   return {
     log(logObj: LogObject, ctx: { options: ConsolaOptions }) {
+      // Check TTY at log time, not at creation time
+      const isTTY = process.stdout?.isTTY ?? false;
+
+      // In non-interactive mode, only show fatal/error messages (level 0)
+      if (!isTTY && logObj.level >= INTERACTIVE_ONLY_MIN_LEVEL) {
+        return;
+      }
+
       // Override badge to false to prevent extra newlines
       const modifiedLogObj = {
         ...logObj,

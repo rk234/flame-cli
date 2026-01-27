@@ -1,7 +1,7 @@
 {
   "name": "flame-cli",
   "author": "",
-  "description": "A simple CLI to interact with firestore databases",
+  "description": "A simple CLI to interact with Firestore databases",
   "license": "MIT",
   "type": "module",
   "version": "0.1.0",
@@ -41,6 +41,7 @@
     "@stricli/auto-complete": "^1.1.2",
     "@stricli/core": "^1.1.2",
     "chalk": "^5.6.2",
+    "cli-table3": "^0.6.5",
     "consola": "^3.4.2",
     "firebase-admin": "^13.4.0"
   },
