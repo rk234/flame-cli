@@ -22,14 +22,14 @@ export default function use(this: LocalContext, _: {}, target: Target) {
     useEmulator,
   };
 
-  const currentConfig = this.tryGetFirebaseConfig()?.path;
+  const currentConfigPath = this.tryGetConfig()?.path;
 
-  if (!currentConfig) {
+  if (!currentConfigPath) {
     logger.error("No config file found!");
     return;
   }
 
-  writeConfig(path.dirname(currentConfig), updatedConfig);
+  writeConfig(path.dirname(currentConfigPath), updatedConfig);
 
   if (useEmulator) {
     logger.success(
