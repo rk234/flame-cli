@@ -10,6 +10,7 @@ import { statusCommand } from "./commands/status/command";
 import { initCommand } from "./commands/init/command";
 import { useCommand } from "./commands/use/command";
 import chalk from "chalk";
+import { collectionsCommand } from "./commands/collections/command";
 
 const routes = buildRouteMap({
   routes: {
@@ -18,6 +19,7 @@ const routes = buildRouteMap({
     use: useCommand,
     up: upCommand,
     down: downCommand,
+    collections: collectionsCommand,
     install: buildInstallCommand("flame", {
       bash: "__flame-cli_bash_complete",
     }),

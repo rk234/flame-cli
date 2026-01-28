@@ -5,9 +5,11 @@ import {
   formatDocuments,
   type DocumentData,
 } from "../../services/formatter";
+import { oraPromise } from "ora";
 
 interface DownFlags {
   limit?: number;
+  docId?: boolean;
 }
 
 /**
@@ -23,14 +25,16 @@ export default async function down(
   flags: DownFlags,
   path: string,
 ) {
-  const { limit } = flags;
+  const { limit, docId } = flags;
   try {
     const firestore = this.getFirestore();
 
     if (isDocumentPath(path)) {
       // Fetch single document
       const docRef = firestore.doc(path);
-      const docSnap = await docRef.get();
+      const docSnap = await oraPromise(docRef.get(), {
+        text: "Fetching document...",
+      });
 
       if (!docSnap.exists) {
         logger.warn(`Document not found: ${path}`);
@@ -42,7 +46,7 @@ export default async function down(
         data: docSnap.data() ?? {},
       };
 
-      const output = formatDocument(doc);
+      const output = formatDocument(doc, docId ?? false);
       this.process.stdout.write(output + "\n");
     } else {
       // Fetch collection
@@ -54,7 +58,9 @@ export default async function down(
         query = query.limit(flags.limit);
       }
 
-      const snapshot = await query.get();
+      const snapshot = await oraPromise(query.get(), {
+        text: "Fetching collection...",
+      });
 
       if (snapshot.empty) {
         logger.warn(`No documents found in collection: ${path}`);
@@ -67,7 +73,7 @@ export default async function down(
       }));
 
       logger.info(`Found ${docs.length} document(s) in ${path}`);
-      const output = formatDocuments(docs);
+      const output = formatDocuments(docs, docId ?? false);
       this.process.stdout.write(output + "\n");
     }
   } catch (error) {

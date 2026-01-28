@@ -21,6 +21,11 @@ export const downCommand = buildCommand({
         parse: Number,
         optional: true,
       },
+      docId: {
+        kind: "boolean",
+        brief: "Include _id field for the document id",
+        optional: true,
+      },
     },
     aliases: {
       l: "limit",

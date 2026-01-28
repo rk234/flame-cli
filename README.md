@@ -57,6 +57,9 @@ flame use emulator
 
 # Switch back to remote Firestore
 flame use remote
+
+# Pipe in json data
+curl https://jsonplaceholder.typicode.com/posts | flame up posts --idField="id"
 ```
 
 ## Commands
