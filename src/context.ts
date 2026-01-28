@@ -15,6 +15,7 @@ import { getFirebaseClient } from "./services/firestore";
 import chalk from "chalk";
 import type { ConsolaInstance } from "consola";
 import { logger } from "./services/logger";
+import { createSpinner, type Spinner } from "./services/spinner";
 
 export interface LocalContext
   extends CommandContext, StricliAutoCompleteContext {
@@ -27,6 +28,7 @@ export interface LocalContext
   readonly tryGetFirebaseConfig: () => FirebaseConfig | null;
   readonly getFirestore: () => Firestore;
   readonly logger: () => ConsolaInstance;
+  readonly spinner: () => Spinner;
 }
 
 function tryWriteLoadedConfig(cwd: string) {
@@ -59,6 +61,14 @@ export function buildContext(process: NodeJS.Process): LocalContext {
           );
         } catch {
           return logger;
+        }
+      },
+      spinner: () => {
+        try {
+          const { config } = loadConfig(process.cwd());
+          return createSpinner(config.useEmulator);
+        } catch {
+          return createSpinner(false);
         }
       },
       tryGetFirebaseConfig: () => {

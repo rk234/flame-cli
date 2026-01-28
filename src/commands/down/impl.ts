@@ -4,7 +4,6 @@ import {
   formatDocuments,
   type DocumentData,
 } from "../../services/formatter";
-import { oraPromise } from "ora";
 
 interface DownFlags {
   limit?: number;
@@ -25,6 +24,7 @@ export default async function down(
   path: string,
 ) {
   const logger = this.logger();
+  const spinner = this.spinner();
   const { limit, docId } = flags;
   try {
     const firestore = this.getFirestore();
@@ -32,7 +32,7 @@ export default async function down(
     if (isDocumentPath(path)) {
       // Fetch single document
       const docRef = firestore.doc(path);
-      const docSnap = await oraPromise(docRef.get(), {
+      const docSnap = await spinner.promise(docRef.get(), {
         text: "Fetching document...",
       });
 
@@ -58,7 +58,7 @@ export default async function down(
         query = query.limit(flags.limit);
       }
 
-      const snapshot = await oraPromise(query.get(), {
+      const snapshot = await spinner.promise(query.get(), {
         text: "Fetching collection...",
       });
 

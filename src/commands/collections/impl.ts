@@ -1,8 +1,8 @@
 import type { LocalContext } from "../../context";
-import { oraPromise } from "ora";
 
 export default async function use(this: LocalContext) {
   const logger = this.logger();
+  const spinner = this.spinner();
   const { config } = this.tryGetConfig() ?? { config: null };
 
   if (!config) {
@@ -15,7 +15,7 @@ export default async function use(this: LocalContext) {
   const db = this.getFirestore();
 
   const collections = (
-    await oraPromise(db.listCollections(), {
+    await spinner.promise(db.listCollections(), {
       text: "Fetching collections...",
     })
   ).map((collection) => collection.id);

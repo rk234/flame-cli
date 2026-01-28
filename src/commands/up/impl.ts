@@ -1,4 +1,3 @@
-import { oraPromise } from "ora";
 import type { LocalContext } from "../../context";
 import { isDocumentPath } from "../../utils/firestorePath";
 import { readFullStream } from "../../utils/io";
@@ -23,6 +22,7 @@ export default async function up(
   path: string,
 ) {
   const logger = this.logger();
+  const spinner = this.spinner();
   const docString = flags.data ?? (await readStdin(this.process.stdin));
   const { merge, idField } = flags;
 
@@ -42,7 +42,7 @@ export default async function up(
         const doc = docJSON[i];
         const id = idField ? String(doc[idField]) : null;
 
-        await oraPromise(
+        await spinner.promise(
           async () => {
             if (idField) {
               if (id) {
@@ -68,7 +68,7 @@ export default async function up(
       logger.info("Upload complete!");
     } else if (!Array.isArray(docJSON) && isDocumentPath(path)) {
       // upload a single doc, id already in path
-      const result = await oraPromise(
+      const result = await spinner.promise(
         db.doc(path).set(docJSON, { merge: merge }),
         {
           text: `Adding document to ${path}`,
@@ -84,17 +84,22 @@ export default async function up(
           })}`,
       );
     } else if (!Array.isArray(docJSON) && !isDocumentPath(path)) {
-      await oraPromise(async () => {
-        if (idField && docJSON[idField]) {
-          const id = docJSON[idField];
-          return await db
-            .collection(path)
-            .doc(id)
-            .set(docJSON, { merge: true });
-        } else {
-          throw new Error("Must specify a document ID field with --idField!");
-        }
-      });
+      await spinner.promise(
+        async () => {
+          if (idField && docJSON[idField]) {
+            const id = docJSON[idField];
+            return await db
+              .collection(path)
+              .doc(id)
+              .set(docJSON, { merge: true });
+          } else {
+            throw new Error("Must specify a document ID field with --idField!");
+          }
+        },
+        {
+          text: `Adding document to ${path}...`,
+        },
+      );
     } else {
       logger.error(
         "If uploading an array of documents, you must specify a document ID field with --idField and a collection path.",

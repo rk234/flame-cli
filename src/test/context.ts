@@ -1,5 +1,6 @@
 import { vi } from "vitest";
 import type { FlameConfig, FirebaseConfig } from "../config/loader";
+import type { Spinner } from "../services/spinner";
 
 export interface MockWritable {
   write: ReturnType<typeof vi.fn>;
@@ -32,6 +33,10 @@ export interface MockLogger {
   prompt: ReturnType<typeof vi.fn>;
 }
 
+export interface MockSpinner {
+  promise: ReturnType<typeof vi.fn>;
+}
+
 export interface TestContext {
   process: MockProcess;
   stdout: string;
@@ -45,6 +50,8 @@ export interface TestContext {
   getFirestore: () => unknown;
   logger: () => MockLogger;
   mockLogger: MockLogger;
+  spinner: () => Spinner;
+  mockSpinner: MockSpinner;
 }
 
 export interface BuildTestContextOptions {
@@ -121,6 +128,15 @@ export function buildTestContext(
     prompt: vi.fn(),
   };
 
+  const mockSpinner: MockSpinner = {
+    promise: vi.fn(async <T>(action: Promise<T> | (() => Promise<T>)) => {
+      if (typeof action === "function") {
+        return await action();
+      }
+      return await action;
+    }),
+  };
+
   const context: TestContext = {
     process: mockProcess,
     os: {
@@ -154,6 +170,8 @@ export function buildTestContext(
     },
     logger: () => mockLogger,
     mockLogger,
+    spinner: () => mockSpinner as Spinner,
+    mockSpinner,
   };
 
   return context;
