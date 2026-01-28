@@ -6,9 +6,16 @@ export interface MockWritable {
   getColorDepth?: () => number;
 }
 
+export interface MockReadable {
+  setEncoding: ReturnType<typeof vi.fn>;
+  on: ReturnType<typeof vi.fn>;
+  read: ReturnType<typeof vi.fn>;
+}
+
 export interface MockProcess {
   stdout: MockWritable;
   stderr: MockWritable;
+  stdin: MockReadable;
   cwd: ReturnType<typeof vi.fn>;
   exit: ReturnType<typeof vi.fn>;
   version: string;
@@ -81,6 +88,11 @@ export function buildTestContext(
       }),
       getColorDepth: () => 4,
     },
+    stdin: {
+      setEncoding: vi.fn(),
+      on: vi.fn(),
+      read: vi.fn(),
+    },
     cwd: vi.fn(() => cwd),
     exit: vi.fn(),
     version: "v22.0.0",
@@ -125,46 +137,109 @@ export function buildTestContext(
 
 /**
  * Creates a mock Firestore instance for testing.
+ * Returns both the mock and tracking objects for assertions.
  */
-function createMockFirestore(mockData: Record<string, unknown>) {
-  return {
-    doc: vi.fn((path: string) => ({
-      get: vi.fn(async () => {
-        const data = mockData[path];
+export function createMockFirestore(mockData: Record<string, unknown> = {}) {
+  const setCalls: Array<{ path: string; data: unknown; options?: unknown }> =
+    [];
+  const addCalls: Array<{ collection: string; data: unknown }> = [];
+
+  const mockDocSet = vi.fn(async (data: unknown, options?: unknown) => {
+    return {
+      writeTime: {
+        toDate: () => new Date(),
+      },
+    };
+  });
+
+  const mockCollectionAdd = vi.fn(async (data: unknown) => {
+    return { id: "generated-id-" + Math.random().toString(36).slice(2, 9) };
+  });
+
+  const firestore = {
+    doc: vi.fn((path: string) => {
+      const docSet = vi.fn(async (data: unknown, options?: unknown) => {
+        setCalls.push({ path, data, options });
         return {
-          exists: data !== undefined,
-          id: path.split("/").pop(),
-          data: () => data,
+          writeTime: {
+            toDate: () => new Date(),
+          },
         };
-      }),
-      set: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-    })),
-    collection: vi.fn((path: string) => ({
-      orderBy: vi.fn(() => ({
-        limit: vi.fn(function (this: unknown) {
-          return this;
-        }),
+      });
+
+      return {
         get: vi.fn(async () => {
-          const collectionData = mockData[path];
-          if (!collectionData || !Array.isArray(collectionData)) {
-            return { empty: true, docs: [] };
-          }
+          const data = mockData[path];
           return {
-            empty: collectionData.length === 0,
-            docs: collectionData.map(
-              (item: { id: string; data: Record<string, unknown> }) => ({
-                id: item.id,
-                data: () => item.data,
-              }),
-            ),
+            exists: data !== undefined,
+            id: path.split("/").pop(),
+            data: () => data,
           };
         }),
-      })),
-      add: vi.fn(),
-    })),
+        set: docSet,
+        update: vi.fn(),
+        delete: vi.fn(),
+      };
+    }),
+    collection: vi.fn((collectionPath: string) => {
+      const collectionAdd = vi.fn(async (data: unknown) => {
+        const id = "generated-id-" + Math.random().toString(36).slice(2, 9);
+        addCalls.push({ collection: collectionPath, data });
+        return { id };
+      });
+
+      return {
+        doc: vi.fn((docId: string) => {
+          const fullPath = `${collectionPath}/${docId}`;
+          const docSet = vi.fn(async (data: unknown, options?: unknown) => {
+            setCalls.push({ path: fullPath, data, options });
+            return {
+              writeTime: {
+                toDate: () => new Date(),
+              },
+            };
+          });
+
+          return {
+            set: docSet,
+            get: vi.fn(async () => {
+              const data = mockData[fullPath];
+              return {
+                exists: data !== undefined,
+                id: docId,
+                data: () => data,
+              };
+            }),
+          };
+        }),
+        orderBy: vi.fn(() => ({
+          limit: vi.fn(function (this: unknown) {
+            return this;
+          }),
+          get: vi.fn(async () => {
+            const collectionData = mockData[collectionPath];
+            if (!collectionData || !Array.isArray(collectionData)) {
+              return { empty: true, docs: [] };
+            }
+            return {
+              empty: collectionData.length === 0,
+              docs: collectionData.map(
+                (item: { id: string; data: Record<string, unknown> }) => ({
+                  id: item.id,
+                  data: () => item.data,
+                }),
+              ),
+            };
+          }),
+        })),
+        add: collectionAdd,
+      };
+    }),
+    _setCalls: setCalls,
+    _addCalls: addCalls,
   };
+
+  return firestore;
 }
 
 /**

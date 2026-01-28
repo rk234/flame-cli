@@ -38,12 +38,7 @@ describe("use command", () => {
         emulatorHost: "127.0.0.1",
         emulatorPort: 8080,
       },
-      firebaseConfig: {
-        project: "test-project",
-        path: "/test/firebase/firebase.json",
-        emulatorHost: "127.0.0.1",
-        emulatorPort: 8080,
-      },
+      configPath: "/test/firebase/.flame.json",
     });
 
     use.call(asContext(context), {}, "emulator");
@@ -67,12 +62,7 @@ describe("use command", () => {
         emulatorHost: "127.0.0.1",
         emulatorPort: 8080,
       },
-      firebaseConfig: {
-        project: "prod-project",
-        path: "/test/firebase/firebase.json",
-        emulatorHost: "127.0.0.1",
-        emulatorPort: 8080,
-      },
+      configPath: "/test/firebase/.flame.json",
     });
 
     use.call(asContext(context), {}, "remote");
@@ -104,7 +94,7 @@ describe("use command", () => {
     expect(writeConfig).not.toHaveBeenCalled();
   });
 
-  it("shows error when no firebase config path is found", () => {
+  it("shows error when config path is null", () => {
     const context = buildTestContext({
       config: {
         project: "test-project",
@@ -112,7 +102,7 @@ describe("use command", () => {
         emulatorHost: "127.0.0.1",
         emulatorPort: 8080,
       },
-      firebaseConfig: null,
+      configPath: null,
     });
 
     use.call(asContext(context), {}, "emulator");
@@ -133,10 +123,7 @@ describe("use command", () => {
         emulatorHost: "localhost",
         emulatorPort: 9000,
       },
-      firebaseConfig: {
-        project: "test-project",
-        path: "/test/firebase/firebase.json",
-      },
+      configPath: "/test/firebase/.flame.json",
     });
 
     use.call(asContext(context), {}, "emulator");
@@ -155,10 +142,7 @@ describe("use command", () => {
         emulatorHost: "127.0.0.1",
         emulatorPort: 8080,
       },
-      firebaseConfig: {
-        project: "my-awesome-project",
-        path: "/test/firebase/firebase.json",
-      },
+      configPath: "/test/firebase/.flame.json",
     });
 
     use.call(asContext(context), {}, "remote");

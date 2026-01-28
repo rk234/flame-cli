@@ -34,9 +34,9 @@ describe("down command", () => {
 
       await down.call(asContext(context), {}, "users/abc123");
 
-      // Should output single document JSON
-      expect(context.stdout).toContain("_id");
-      expect(context.stdout).toContain("abc123");
+      // Should output single document JSON with the data
+      expect(context.stdout).toContain("John");
+      expect(context.stdout).toContain("john@example.com");
     });
 
     it("treats paths with odd segments as collection paths", async () => {
@@ -71,7 +71,22 @@ describe("down command", () => {
       // Verify output contains the document data
       const output = context.stdout;
       expect(output).toContain("Test User");
+      expect(output).toContain("25");
+    });
+
+    it("outputs document data with _id when docId flag is true", async () => {
+      const context = buildTestContext({
+        firestoreMock: {
+          "users/doc1": { name: "Test User", age: 25 },
+        },
+      });
+
+      await down.call(asContext(context), { docId: true }, "users/doc1");
+
+      // Verify output contains _id
+      const output = context.stdout;
       expect(output).toContain("_id");
+      expect(output).toContain("doc1");
     });
 
     it("warns when document is not found", async () => {
@@ -106,6 +121,21 @@ describe("down command", () => {
       const output = context.stdout;
       expect(output).toContain("Widget");
       expect(output).toContain("Gadget");
+    });
+
+    it("outputs collection data with _id when docId flag is true", async () => {
+      const context = buildTestContext({
+        firestoreMock: {
+          products: [{ id: "prod1", data: { name: "Widget" } }],
+        },
+      });
+
+      await down.call(asContext(context), { docId: true }, "products");
+
+      // Verify output contains _id
+      const output = context.stdout;
+      expect(output).toContain("_id");
+      expect(output).toContain("prod1");
     });
 
     it("warns when collection is empty", async () => {
