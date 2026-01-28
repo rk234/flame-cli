@@ -60,6 +60,8 @@ export function createLogger(level: LogLevel = "normal"): ConsolaInstance {
   });
 }
 
+export const logger = createLogger();
+
 // Create a scoped logger for a specific component
 export function scopedLogger(
   logger: ConsolaInstance,

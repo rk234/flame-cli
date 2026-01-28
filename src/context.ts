@@ -14,8 +14,7 @@ import type { Firestore } from "firebase-admin/firestore";
 import { getFirebaseClient } from "./services/firestore";
 import chalk from "chalk";
 import type { ConsolaInstance } from "consola";
-import { createLogger } from "./services/logger";
-import { create } from "node:domain";
+import { logger } from "./services/logger";
 
 export interface LocalContext
   extends CommandContext, StricliAutoCompleteContext {
@@ -38,13 +37,11 @@ function tryWriteLoadedConfig(cwd: string) {
       writeConfig(cwd, config);
     }
   } catch {
-    const logger = createLogger();
     logger.verbose("Could not infer/load config!");
   }
 }
 
 export function buildContext(process: NodeJS.Process): LocalContext {
-  const logger = createLogger();
   try {
     tryWriteLoadedConfig(process.cwd());
     return {
