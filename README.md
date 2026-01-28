@@ -46,20 +46,23 @@ flame init
 # Check configuration status
 flame status
 
-# Download documents from a collection
+# Upload a document
+flame up users/user1 --data '{"name": "John", "email": "john@example.com"}'
+
+# Download a document
+flame down users/user1
+
+# Download all documents from a collection
 flame down users
 
-# Download a specific document
-flame down users/abc123
+# Upload multiple documents from an API
+curl -s https://jsonplaceholder.typicode.com/users | flame up users --idField="id"
 
-# Switch to local emulator
+# Switch to local emulator for development
 flame use emulator
 
 # Switch back to remote Firestore
 flame use remote
-
-# Pipe in json data
-curl https://jsonplaceholder.typicode.com/posts | flame up posts --idField="id"
 ```
 
 ## Commands
