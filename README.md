@@ -205,7 +205,3 @@ npm run test:coverage
 - [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) - Firestore client
 - [Consola](https://github.com/unjs/consola) - Elegant console logging
 - [Chalk](https://github.com/chalk/chalk) - Terminal styling
-
-## License
-
-MIT
