@@ -185,6 +185,7 @@ export function createMockFirestore(mockData: Record<string, unknown> = {}) {
   const setCalls: Array<{ path: string; data: unknown; options?: unknown }> =
     [];
   const addCalls: Array<{ collection: string; data: unknown }> = [];
+  const deleteCalls: Array<{ path: string }> = [];
 
   const mockDocSet = vi.fn(async (data: unknown, options?: unknown) => {
     return {
@@ -209,6 +210,10 @@ export function createMockFirestore(mockData: Record<string, unknown> = {}) {
         };
       });
 
+      const docDelete = vi.fn(async () => {
+        deleteCalls.push({ path });
+      });
+
       return {
         get: vi.fn(async () => {
           const data = mockData[path];
@@ -220,7 +225,7 @@ export function createMockFirestore(mockData: Record<string, unknown> = {}) {
         }),
         set: docSet,
         update: vi.fn(),
-        delete: vi.fn(),
+        delete: docDelete,
       };
     }),
     collection: vi.fn((collectionPath: string) => {
@@ -230,55 +235,63 @@ export function createMockFirestore(mockData: Record<string, unknown> = {}) {
         return { id };
       });
 
-      return {
-        doc: vi.fn((docId: string) => {
-          const fullPath = `${collectionPath}/${docId}`;
-          const docSet = vi.fn(async (data: unknown, options?: unknown) => {
+      const createDocRef = (docId: string) => {
+        const fullPath = `${collectionPath}/${docId}`;
+        return {
+          delete: vi.fn(async () => {
+            deleteCalls.push({ path: fullPath });
+          }),
+          set: vi.fn(async (data: unknown, options?: unknown) => {
             setCalls.push({ path: fullPath, data, options });
             return {
               writeTime: {
                 toDate: () => new Date(),
               },
             };
-          });
+          }),
+          get: vi.fn(async () => {
+            const data = mockData[fullPath];
+            return {
+              exists: data !== undefined,
+              id: docId,
+              data: () => data,
+            };
+          }),
+        };
+      };
 
-          return {
-            set: docSet,
-            get: vi.fn(async () => {
-              const data = mockData[fullPath];
-              return {
-                exists: data !== undefined,
-                id: docId,
-                data: () => data,
-              };
+      const getCollectionDocs = () => {
+        const collectionData = mockData[collectionPath];
+        if (!collectionData || !Array.isArray(collectionData)) {
+          return { empty: true, docs: [] };
+        }
+        return {
+          empty: collectionData.length === 0,
+          docs: collectionData.map(
+            (item: { id: string; data: Record<string, unknown> }) => ({
+              id: item.id,
+              data: () => item.data,
+              ref: createDocRef(item.id),
             }),
-          };
-        }),
+          ),
+        };
+      };
+
+      return {
+        doc: vi.fn((docId: string) => createDocRef(docId)),
+        get: vi.fn(async () => getCollectionDocs()),
         orderBy: vi.fn(() => ({
           limit: vi.fn(function (this: unknown) {
             return this;
           }),
-          get: vi.fn(async () => {
-            const collectionData = mockData[collectionPath];
-            if (!collectionData || !Array.isArray(collectionData)) {
-              return { empty: true, docs: [] };
-            }
-            return {
-              empty: collectionData.length === 0,
-              docs: collectionData.map(
-                (item: { id: string; data: Record<string, unknown> }) => ({
-                  id: item.id,
-                  data: () => item.data,
-                }),
-              ),
-            };
-          }),
+          get: vi.fn(async () => getCollectionDocs()),
         })),
         add: collectionAdd,
       };
     }),
     _setCalls: setCalls,
     _addCalls: addCalls,
+    _deleteCalls: deleteCalls,
   };
 
   return firestore;

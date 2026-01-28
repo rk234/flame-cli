@@ -6,6 +6,7 @@ import {
 import { version, description } from "../package.json";
 import { upCommand } from "./commands/up/command";
 import { downCommand } from "./commands/down/command";
+import { deleteCommand } from "./commands/delete/command";
 import { statusCommand } from "./commands/status/command";
 import { initCommand } from "./commands/init/command";
 import { useCommand } from "./commands/use/command";
@@ -19,6 +20,8 @@ const routes = buildRouteMap({
     use: useCommand,
     up: upCommand,
     down: downCommand,
+    delete: deleteCommand,
+    rm: deleteCommand,
     collections: collectionsCommand,
     install: buildInstallCommand("flame", {
       bash: "__flame-cli_bash_complete",

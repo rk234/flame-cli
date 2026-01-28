@@ -55,8 +55,11 @@ flame down users/user1
 # Download all documents from a collection
 flame down users
 
-# Upload multiple documents from an API
-curl -s https://jsonplaceholder.typicode.com/users | flame up users --idField="id"
+# Delete a document
+flame delete users/user1
+
+# Delete all documents in a collection
+flame rm users --force
 
 # Switch to local emulator for development
 flame use emulator
@@ -157,6 +160,37 @@ flame up users/user1 --data '{"status": "active"}' --merge
 
 - **Document path** (even segments, e.g., `users/user1`): Uploads a single document
 - **Collection path** (odd segments, e.g., `users`): Requires `--idField` for single docs, or an array of documents
+
+### `flame delete <path>` (alias: `rm`)
+
+Delete a document or all documents in a collection. Always asks for confirmation unless `--force` is used.
+
+```bash
+# Delete a single document (with confirmation prompt)
+flame delete users/user1
+
+# Delete all documents in a collection
+flame delete users
+
+# Skip confirmation with --force
+flame delete users/user1 --force
+flame delete users -f
+
+# Using the rm alias
+flame rm users/user1
+flame rm users -f
+
+# Delete nested documents/collections
+flame delete users/user1/orders/order1
+flame rm users/user1/orders --force
+```
+
+**Options:**
+| Flag | Alias | Description |
+|------|-------|-------------|
+| `--force` | `-f` | Skip confirmation prompt |
+
+**Warning:** Deleting a collection will delete ALL documents within it. This operation cannot be undone.
 
 ## Configuration
 
