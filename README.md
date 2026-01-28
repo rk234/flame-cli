@@ -97,7 +97,7 @@ Flame uses three configuration sources:
 ```json
 {
   "project": "my-firebase-project",
-  "useEmulator": false,
+  "useEmulator": true,
   "emulatorHost": "127.0.0.1",
   "emulatorPort": 8080
 }
@@ -144,7 +144,7 @@ flame down users | grep "active"
 # Upload from file
 cat backup.json | flame up users --idField="id"
 
-# Chain download and upload (e.g., copy between projects)
+# Chain download and upload (e.g., copy between collections)
 flame down users | flame up users-backup --idField="_id"
 
 # Fetch from API and upload
