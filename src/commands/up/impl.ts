@@ -1,6 +1,5 @@
 import { oraPromise } from "ora";
 import type { LocalContext } from "../../context";
-import { logger } from "../../services/logger";
 import { isDocumentPath } from "../../utils/firestorePath";
 import { readFullStream } from "../../utils/io";
 import type { ReadStream } from "tty";
@@ -23,6 +22,7 @@ export default async function up(
   flags: UpFlags,
   path: string,
 ) {
+  const logger = this.logger();
   const docString = flags.data ?? (await readStdin(this.process.stdin));
   const { merge, idField } = flags;
 

@@ -1,11 +1,11 @@
 import type { LocalContext } from "../../context";
 import { writeConfig } from "../../config/loader";
-import { logger } from "../../services/logger";
 import path from "node:path";
 
 type Target = "remote" | "emulator";
 
 export default function use(this: LocalContext, _: {}, target: Target) {
+  const logger = this.logger();
   const { config } = this.tryGetConfig() ?? { config: null };
 
   if (!config) {

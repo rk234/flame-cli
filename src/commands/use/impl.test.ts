@@ -6,23 +6,11 @@ import use from "./impl";
 // Helper to cast test context to LocalContext for testing
 const asContext = (ctx: TestContext) => ctx as unknown as LocalContext;
 
-// Mock the logger
-vi.mock("../../services/logger", () => ({
-  logger: {
-    log: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    success: vi.fn(),
-  },
-}));
-
 // Mock the config writer
 vi.mock("../../config/loader", () => ({
   writeConfig: vi.fn(),
 }));
 
-import { logger } from "../../services/logger";
 import { writeConfig } from "../../config/loader";
 
 describe("use command", () => {
@@ -49,7 +37,7 @@ describe("use command", () => {
       expect.objectContaining({ useEmulator: true }),
     );
     // Verify success message
-    expect(logger.success).toHaveBeenCalledWith(
+    expect(context.mockLogger.success).toHaveBeenCalledWith(
       expect.stringContaining("emulator"),
     );
   });
@@ -73,7 +61,7 @@ describe("use command", () => {
       expect.objectContaining({ useEmulator: false }),
     );
     // Verify success message mentions remote
-    expect(logger.success).toHaveBeenCalledWith(
+    expect(context.mockLogger.success).toHaveBeenCalledWith(
       expect.stringContaining("remote"),
     );
   });
@@ -87,7 +75,7 @@ describe("use command", () => {
     use.call(asContext(context), {}, "emulator");
 
     // Verify error was logged
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(context.mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining("Could not infer or load flame config"),
     );
     // Verify config was not written
@@ -108,7 +96,7 @@ describe("use command", () => {
     use.call(asContext(context), {}, "emulator");
 
     // Verify error was logged
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(context.mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining("No config file found"),
     );
     // Verify config was not written
@@ -129,7 +117,7 @@ describe("use command", () => {
     use.call(asContext(context), {}, "emulator");
 
     // Verify success message includes host:port
-    expect(logger.success).toHaveBeenCalledWith(
+    expect(context.mockLogger.success).toHaveBeenCalledWith(
       expect.stringContaining("localhost:9000"),
     );
   });
@@ -148,7 +136,7 @@ describe("use command", () => {
     use.call(asContext(context), {}, "remote");
 
     // Verify success message includes project name
-    expect(logger.success).toHaveBeenCalledWith(
+    expect(context.mockLogger.success).toHaveBeenCalledWith(
       expect.stringContaining("my-awesome-project"),
     );
   });

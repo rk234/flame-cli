@@ -1,5 +1,4 @@
 import type { LocalContext } from "../../context";
-import { logger } from "../../services/logger";
 import {
   formatDocument,
   formatDocuments,
@@ -25,6 +24,7 @@ export default async function down(
   flags: DownFlags,
   path: string,
 ) {
+  const logger = this.logger();
   const { limit, docId } = flags;
   try {
     const firestore = this.getFirestore();

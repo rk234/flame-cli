@@ -1,5 +1,4 @@
 import type { LocalContext } from "../../context";
-import { logger } from "../../services/logger";
 import {
   CONFIG_FILE,
   writeConfig,
@@ -8,6 +7,7 @@ import {
 import path from "path/win32";
 
 export default async function init(this: LocalContext) {
+  const logger = this.logger();
   logger.start("Initializing flame...");
   const { config, path: existingConfPath } = this.tryGetConfig() ?? {
     config: null,

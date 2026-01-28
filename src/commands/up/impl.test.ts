@@ -10,19 +10,6 @@ import up from "./impl";
 // Helper to cast test context to LocalContext for testing
 const asContext = (ctx: TestContext) => ctx as unknown as LocalContext;
 
-// Mock the logger
-vi.mock("../../services/logger", () => ({
-  logger: {
-    log: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    success: vi.fn(),
-  },
-}));
-
-import { logger } from "../../services/logger";
-
 describe("up command", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -74,7 +61,7 @@ describe("up command", () => {
 
       await up.call(asContext(context), { data: docData }, "users/user1");
 
-      expect(logger.success).toHaveBeenCalledWith(
+      expect(context.mockLogger.success).toHaveBeenCalledWith(
         expect.stringContaining("users/user1"),
       );
     });
@@ -150,7 +137,7 @@ describe("up command", () => {
 
       await up.call(asContext(context), { data: docsData }, "users");
 
-      expect(logger.info).toHaveBeenCalledWith(
+      expect(context.mockLogger.info).toHaveBeenCalledWith(
         expect.stringContaining("Upload complete"),
       );
     });
@@ -184,7 +171,7 @@ describe("up command", () => {
 
       await up.call(asContext(context), { data: "" }, "users/user1");
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("No document data found"),
       );
     });
@@ -198,7 +185,7 @@ describe("up command", () => {
         "users/user1",
       );
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("Failed to upload"),
       );
     });
@@ -212,7 +199,7 @@ describe("up command", () => {
 
       await up.call(asContext(context), { data: docsData }, "users/user1");
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("array of documents"),
       );
     });
@@ -226,7 +213,7 @@ describe("up command", () => {
 
       await up.call(asContext(context), { data: docData }, "users");
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("Failed to upload"),
       );
     });
@@ -241,7 +228,7 @@ describe("up command", () => {
 
       await up.call(asContext(context), { data: docData }, "users/user1");
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("Failed to upload"),
       );
     });

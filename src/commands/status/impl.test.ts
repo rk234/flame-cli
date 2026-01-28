@@ -6,20 +6,6 @@ import status from "./impl";
 // Helper to cast test context to LocalContext for testing
 const asContext = (ctx: TestContext) => ctx as unknown as LocalContext;
 
-// Mock the logger to capture log calls
-vi.mock("../../services/logger", () => ({
-  logger: {
-    log: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    success: vi.fn(),
-  },
-}));
-
-// Need to import after mock
-import { logger } from "../../services/logger";
-
 describe("status command", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -31,9 +17,9 @@ describe("status command", () => {
     status.call(asContext(context));
 
     // Check that logger.log was called (for version header)
-    expect(logger.log).toHaveBeenCalled();
+    expect(context.mockLogger.log).toHaveBeenCalled();
     // Check that node version was logged
-    expect(logger.info).toHaveBeenCalledWith(
+    expect(context.mockLogger.info).toHaveBeenCalledWith(
       expect.stringContaining("v22.0.0"),
     );
   });
@@ -52,17 +38,19 @@ describe("status command", () => {
     status.call(asContext(context));
 
     // Verify project info was logged
-    expect(logger.info).toHaveBeenCalledWith(
+    expect(context.mockLogger.info).toHaveBeenCalledWith(
       expect.stringContaining("my-project"),
     );
     // Verify emulator status was logged
-    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining("Yes"));
+    expect(context.mockLogger.info).toHaveBeenCalledWith(
+      expect.stringContaining("Yes"),
+    );
     // Verify emulator host/port was logged
-    expect(logger.info).toHaveBeenCalledWith(
+    expect(context.mockLogger.info).toHaveBeenCalledWith(
       expect.stringContaining("localhost:9000"),
     );
     // Verify config path was logged
-    expect(logger.info).toHaveBeenCalledWith(
+    expect(context.mockLogger.info).toHaveBeenCalledWith(
       expect.stringContaining("/path/to/.flame.json"),
     );
   });
@@ -80,7 +68,9 @@ describe("status command", () => {
     status.call(asContext(context));
 
     // Verify emulator status shows "No"
-    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining("No"));
+    expect(context.mockLogger.info).toHaveBeenCalledWith(
+      expect.stringContaining("No"),
+    );
   });
 
   it("warns when no config is found", () => {
@@ -92,7 +82,7 @@ describe("status command", () => {
     status.call(asContext(context));
 
     // Verify warning was shown
-    expect(logger.warn).toHaveBeenCalledWith(
+    expect(context.mockLogger.warn).toHaveBeenCalledWith(
       expect.stringContaining("No flame config file found"),
     );
   });

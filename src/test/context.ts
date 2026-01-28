@@ -22,6 +22,16 @@ export interface MockProcess {
   env: Record<string, string | undefined>;
 }
 
+export interface MockLogger {
+  log: ReturnType<typeof vi.fn>;
+  info: ReturnType<typeof vi.fn>;
+  warn: ReturnType<typeof vi.fn>;
+  error: ReturnType<typeof vi.fn>;
+  success: ReturnType<typeof vi.fn>;
+  start: ReturnType<typeof vi.fn>;
+  prompt: ReturnType<typeof vi.fn>;
+}
+
 export interface TestContext {
   process: MockProcess;
   stdout: string;
@@ -33,6 +43,8 @@ export interface TestContext {
   tryGetConfig: () => { config: FlameConfig; path: string | null } | null;
   tryGetFirebaseConfig: () => FirebaseConfig | null;
   getFirestore: () => unknown;
+  logger: () => MockLogger;
+  mockLogger: MockLogger;
 }
 
 export interface BuildTestContextOptions {
@@ -99,6 +111,16 @@ export function buildTestContext(
     env: {},
   };
 
+  const mockLogger: MockLogger = {
+    log: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    success: vi.fn(),
+    start: vi.fn(),
+    prompt: vi.fn(),
+  };
+
   const context: TestContext = {
     process: mockProcess,
     os: {
@@ -130,6 +152,8 @@ export function buildTestContext(
       // Return a mock Firestore instance
       return createMockFirestore(firestoreMock) as unknown;
     },
+    logger: () => mockLogger,
+    mockLogger,
   };
 
   return context;

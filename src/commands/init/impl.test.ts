@@ -6,26 +6,12 @@ import init from "./impl";
 // Helper to cast test context to LocalContext for testing
 const asContext = (ctx: TestContext) => ctx as unknown as LocalContext;
 
-// Mock the logger
-vi.mock("../../services/logger", () => ({
-  logger: {
-    log: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    success: vi.fn(),
-    start: vi.fn(),
-    prompt: vi.fn(),
-  },
-}));
-
 // Mock the config writer
 vi.mock("../../config/loader", () => ({
   CONFIG_FILE: ".flame.json",
   writeConfig: vi.fn(),
 }));
 
-import { logger } from "../../services/logger";
 import { writeConfig } from "../../config/loader";
 
 describe("init command", () => {
@@ -47,7 +33,7 @@ describe("init command", () => {
     await init.call(asContext(context));
 
     // Should show success that config already exists
-    expect(logger.success).toHaveBeenCalledWith(
+    expect(context.mockLogger.success).toHaveBeenCalledWith(
       expect.stringContaining("already exists"),
     );
     // Should not write a new config
@@ -72,13 +58,13 @@ describe("init command", () => {
     await init.call(asContext(context));
 
     // Should log that config was inferred
-    expect(logger.info).toHaveBeenCalledWith(
+    expect(context.mockLogger.info).toHaveBeenCalledWith(
       expect.stringContaining("inferred"),
     );
     // Should write the config
     expect(writeConfig).toHaveBeenCalled();
     // Should show success
-    expect(logger.success).toHaveBeenCalledWith(
+    expect(context.mockLogger.success).toHaveBeenCalledWith(
       expect.stringContaining("successfully created"),
     );
   });
@@ -96,7 +82,7 @@ describe("init command", () => {
 
     await init.call(asContext(context));
 
-    expect(logger.start).toHaveBeenCalledWith(
+    expect(context.mockLogger.start).toHaveBeenCalledWith(
       expect.stringContaining("Initializing"),
     );
   });
@@ -111,7 +97,7 @@ describe("init command", () => {
     await init.call(asContext(context));
 
     // Should warn about not being able to infer config
-    expect(logger.warn).toHaveBeenCalledWith(
+    expect(context.mockLogger.warn).toHaveBeenCalledWith(
       expect.stringContaining("Could not infer config"),
     );
   });

@@ -1,9 +1,9 @@
 import type { LocalContext } from "../../context";
 import { version } from "../../../package.json";
 import chalk from "chalk";
-import { logger } from "../../services/logger";
 
 export default function status(this: LocalContext) {
+  const logger = this.logger();
   logger.log(
     `🔥 ${chalk.bold.hex("#FFA500")("FLAME")} ${chalk.greenBright(`v${version}`)}`,
   );

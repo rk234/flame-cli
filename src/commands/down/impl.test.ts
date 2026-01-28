@@ -6,19 +6,6 @@ import down from "./impl";
 // Helper to cast test context to LocalContext for testing
 const asContext = (ctx: TestContext) => ctx as unknown as LocalContext;
 
-// Mock the logger
-vi.mock("../../services/logger", () => ({
-  logger: {
-    log: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    success: vi.fn(),
-  },
-}));
-
-import { logger } from "../../services/logger";
-
 describe("down command", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -52,7 +39,7 @@ describe("down command", () => {
       await down.call(asContext(context), {}, "users");
 
       // Should output collection info
-      expect(logger.info).toHaveBeenCalledWith(
+      expect(context.mockLogger.info).toHaveBeenCalledWith(
         expect.stringContaining("2 document(s)"),
       );
     });
@@ -98,7 +85,7 @@ describe("down command", () => {
 
       await down.call(asContext(context), {}, "users/nonexistent");
 
-      expect(logger.warn).toHaveBeenCalledWith(
+      expect(context.mockLogger.warn).toHaveBeenCalledWith(
         expect.stringContaining("Document not found"),
       );
     });
@@ -147,7 +134,7 @@ describe("down command", () => {
 
       await down.call(asContext(context), {}, "empty-collection");
 
-      expect(logger.warn).toHaveBeenCalledWith(
+      expect(context.mockLogger.warn).toHaveBeenCalledWith(
         expect.stringContaining("No documents found"),
       );
     });
@@ -165,7 +152,7 @@ describe("down command", () => {
 
       await down.call(asContext(context), {}, "orders");
 
-      expect(logger.info).toHaveBeenCalledWith(
+      expect(context.mockLogger.info).toHaveBeenCalledWith(
         expect.stringContaining("3 document(s)"),
       );
     });
@@ -196,7 +183,7 @@ describe("down command", () => {
 
       await down.call(asContext(context), {}, "users/user1/orders");
 
-      expect(logger.info).toHaveBeenCalledWith(
+      expect(context.mockLogger.info).toHaveBeenCalledWith(
         expect.stringContaining("2 document(s)"),
       );
     });
@@ -213,7 +200,7 @@ describe("down command", () => {
 
       await down.call(asContext(context), {}, "users");
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("Connection failed"),
       );
     });
