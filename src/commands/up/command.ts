@@ -28,7 +28,8 @@ export const upCommand = buildCommand({
       },
       idField: {
         kind: "parsed",
-        brief: "JSON document data to upload",
+        brief:
+          "The field to use as the document ID. Ignored when path includes a document ID.",
         optional: true,
         parse: String,
       },

@@ -119,9 +119,41 @@ flame down users/abc123/orders
 |------|-------|-------------|
 | `--limit <n>` | `-l` | Maximum number of documents to return |
 
-### `flame up` (Coming Soon)
+### `flame up <path>`
 
-Upload documents to Firestore from JSON input.
+Upload documents to Firestore from JSON input (via `--data` flag or stdin).
+
+```bash
+# Upload a single document to a specific path
+flame up users/user1 --data '{"name": "John", "email": "john@example.com"}'
+
+# Upload from stdin
+echo '{"name": "Jane"}' | flame up users/user2
+
+# Upload multiple documents to a collection (requires --idField)
+flame up users --idField="_id" --data '[{"_id": "u1", "name": "Alice"}, {"_id": "u2", "name": "Bob"}]'
+
+# Pipe from a file
+cat users.json | flame up users --idField="id"
+
+# Pipe from an API
+curl -s https://jsonplaceholder.typicode.com/users | flame up users --idField="id"
+
+# Merge with existing document data
+flame up users/user1 --data '{"status": "active"}' --merge
+```
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--data <json>` | JSON document data to upload (alternative to stdin) |
+| `--idField <field>` | Field to use as document ID when uploading to a collection |
+| `--merge` | Merge with existing document instead of overwriting |
+
+**Path Types:**
+
+- **Document path** (even segments, e.g., `users/user1`): Uploads a single document
+- **Collection path** (odd segments, e.g., `users`): Requires `--idField` for single docs, or an array of documents
 
 ## Configuration
 
@@ -181,6 +213,15 @@ flame down users > backup.json
 
 # Pipe to other commands
 flame down users | grep "active"
+
+# Upload from file
+cat backup.json | flame up users --idField="id"
+
+# Chain download and upload (e.g., copy between projects)
+flame down users | flame up users-backup --idField="_id"
+
+# Fetch from API and upload
+curl -s https://api.example.com/data | flame up imports --idField="id"
 ```
 
 ## Shell Autocompletion

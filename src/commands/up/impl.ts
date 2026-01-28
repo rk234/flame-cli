@@ -1,7 +1,7 @@
-import ora, { oraPromise } from "ora";
+import { oraPromise } from "ora";
 import type { LocalContext } from "../../context";
 import { logger } from "../../services/logger";
-import { documentId, isDocumentPath } from "../../utils/firestorePath";
+import { isDocumentPath } from "../../utils/firestorePath";
 import { readFullStream } from "../../utils/io";
 import type { ReadStream } from "tty";
 
