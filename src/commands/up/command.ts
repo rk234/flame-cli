@@ -36,6 +36,6 @@ export const upCommand = buildCommand({
     },
   },
   docs: {
-    brief: "Upload data to a collection",
+    brief: "Upload document(s) to a collection",
   },
 });
