@@ -40,8 +40,8 @@ describe("up command", () => {
 
       // Verify document was set
       expect(mockFirestore._setCalls).toHaveLength(1);
-      expect(mockFirestore._setCalls[0].path).toBe("users/user1");
-      expect(mockFirestore._setCalls[0].data).toEqual({
+      expect(mockFirestore._setCalls[0]!.path).toBe("users/user1");
+      expect(mockFirestore._setCalls[0]!.data).toEqual({
         name: "John",
         email: "john@test.com",
       });
@@ -62,7 +62,7 @@ describe("up command", () => {
 
       // Verify merge option was passed
       expect(mockFirestore._setCalls).toHaveLength(1);
-      expect(mockFirestore._setCalls[0].options).toEqual({ merge: true });
+      expect(mockFirestore._setCalls[0]!.options).toEqual({ merge: true });
     });
 
     it("logs success message after uploading single document", async () => {
@@ -97,7 +97,7 @@ describe("up command", () => {
 
       // Verify document was set with custom ID
       expect(mockFirestore._setCalls).toHaveLength(1);
-      expect(mockFirestore._setCalls[0].path).toBe("users/custom-id");
+      expect(mockFirestore._setCalls[0]!.path).toBe("users/custom-id");
     });
   });
 
@@ -121,9 +121,9 @@ describe("up command", () => {
 
       // Verify all documents were set
       expect(mockFirestore._setCalls).toHaveLength(3);
-      expect(mockFirestore._setCalls[0].path).toBe("users/user1");
-      expect(mockFirestore._setCalls[1].path).toBe("users/user2");
-      expect(mockFirestore._setCalls[2].path).toBe("users/user3");
+      expect(mockFirestore._setCalls[0]!.path).toBe("users/user1");
+      expect(mockFirestore._setCalls[1]!.path).toBe("users/user2");
+      expect(mockFirestore._setCalls[2]!.path).toBe("users/user3");
     });
 
     it("uploads multiple documents with auto-generated IDs when no idField", async () => {
@@ -137,8 +137,8 @@ describe("up command", () => {
 
       // Verify documents were added (not set)
       expect(mockFirestore._addCalls).toHaveLength(2);
-      expect(mockFirestore._addCalls[0].collection).toBe("users");
-      expect(mockFirestore._addCalls[1].collection).toBe("users");
+      expect(mockFirestore._addCalls[0]!.collection).toBe("users");
+      expect(mockFirestore._addCalls[1]!.collection).toBe("users");
     });
 
     it("logs completion message after uploading multiple documents", async () => {
@@ -173,8 +173,8 @@ describe("up command", () => {
 
       // Verify merge option was passed to all documents
       expect(mockFirestore._setCalls).toHaveLength(2);
-      expect(mockFirestore._setCalls[0].options).toEqual({ merge: true });
-      expect(mockFirestore._setCalls[1].options).toEqual({ merge: true });
+      expect(mockFirestore._setCalls[0]!.options).toEqual({ merge: true });
+      expect(mockFirestore._setCalls[1]!.options).toEqual({ merge: true });
     });
   });
 
@@ -257,7 +257,7 @@ describe("up command", () => {
 
       await up.call(asContext(context), { data: docData }, "users/user1");
 
-      expect(mockFirestore._setCalls[0].data).toEqual({ source: "flag" });
+      expect(mockFirestore._setCalls[0]!.data).toEqual({ source: "flag" });
     });
   });
 });
