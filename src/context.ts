@@ -12,7 +12,10 @@ import {
 } from "./config/loader";
 import type { Firestore } from "firebase-admin/firestore";
 import { getFirebaseClient } from "./services/firestore";
-import { logger } from "./services/logger";
+import chalk from "chalk";
+import type { ConsolaInstance } from "consola";
+import { createLogger } from "./services/logger";
+import { create } from "node:domain";
 
 export interface LocalContext
   extends CommandContext, StricliAutoCompleteContext {
@@ -24,6 +27,7 @@ export interface LocalContext
   } | null;
   readonly tryGetFirebaseConfig: () => FirebaseConfig | null;
   readonly getFirestore: () => Firestore;
+  readonly logger: () => ConsolaInstance;
 }
 
 function tryWriteLoadedConfig(cwd: string) {
@@ -34,11 +38,13 @@ function tryWriteLoadedConfig(cwd: string) {
       writeConfig(cwd, config);
     }
   } catch {
+    const logger = createLogger();
     logger.verbose("Could not infer/load config!");
   }
 }
 
 export function buildContext(process: NodeJS.Process): LocalContext {
+  const logger = createLogger();
   try {
     tryWriteLoadedConfig(process.cwd());
     return {
@@ -46,6 +52,18 @@ export function buildContext(process: NodeJS.Process): LocalContext {
       os,
       fs,
       path,
+      logger: () => {
+        try {
+          const { config } = loadConfig(process.cwd());
+          return logger.withTag(
+            chalk.bold.blueBright(
+              config.useEmulator ? "[emulator]" : "[remote]",
+            ),
+          );
+        } catch {
+          return logger;
+        }
+      },
       tryGetFirebaseConfig: () => {
         try {
           return loadFirebaseConfig(process.cwd());

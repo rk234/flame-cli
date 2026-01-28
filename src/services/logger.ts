@@ -60,11 +60,12 @@ export function createLogger(level: LogLevel = "normal"): ConsolaInstance {
   });
 }
 
-// Default logger instance
-export const logger = createLogger();
-
 // Create a scoped logger for a specific component
-export function scopedLogger(scope: string, level?: LogLevel): ConsolaInstance {
+export function scopedLogger(
+  logger: ConsolaInstance,
+  scope: string,
+  level?: LogLevel,
+): ConsolaInstance {
   const base = level ? createLogger(level) : logger;
   return base.withTag(scope);
 }
