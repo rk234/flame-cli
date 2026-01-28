@@ -16,12 +16,13 @@ export default async function del(
 
   try {
     const firestore = this.getFirestore();
+    const { config } = this.getConfig();
     const isDocument = isDocumentPath(path);
 
     if (!flags.force) {
       const targetType = isDocument ? "document" : "collection";
       const confirmed = await logger.prompt(
-        `Are you sure you want to delete the ${targetType} at ${chalk.bold(path)}?`,
+        `Are you sure you want to delete the ${targetType} at ${chalk.bold(path)}? You are currently targeting the ${chalk.bold.blueBright(config.useEmulator ? "EMULATOR" : "REMOTE")}.`,
         {
           type: "confirm",
           initial: false,
