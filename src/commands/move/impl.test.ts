@@ -5,7 +5,7 @@ import {
   type TestContext,
 } from "../../test/context";
 import type { LocalContext } from "../../context";
-import copy from "./impl";
+import move from "./impl";
 
 // Helper to cast test context to LocalContext for testing
 const asContext = (ctx: TestContext) => ctx as unknown as LocalContext;
@@ -23,7 +23,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(asContext(context), {}, "users/user1", "users/user2");
+      await move.call(asContext(context), {}, "users/user1", "users/user2");
 
       expect(mockFirestore._setCalls).toHaveLength(1);
       expect(mockFirestore._setCalls[0]!.path).toBe("users/user2");
@@ -40,7 +40,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(asContext(context), {}, "users/user1", "users/user2");
+      await move.call(asContext(context), {}, "users/user1", "users/user2");
 
       expect(context.mockLogger.success).toHaveBeenCalledWith(
         expect.stringContaining("users/user1"),
@@ -57,7 +57,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(asContext(context), {}, "users/user1", "admins/admin1");
+      await move.call(asContext(context), {}, "users/user1", "admins/admin1");
 
       expect(mockFirestore._setCalls).toHaveLength(1);
       expect(mockFirestore._setCalls[0]!.path).toBe("admins/admin1");
@@ -74,7 +74,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(
+      await move.call(
         asContext(context),
         {},
         "users/user1/orders/order1",
@@ -98,7 +98,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(asContext(context), {}, "users/user1", "users/user2");
+      await move.call(asContext(context), {}, "users/user1", "users/user2");
 
       expect(mockFirestore._setCalls).toHaveLength(1);
       expect(mockFirestore._setCalls[0]!.data).toEqual({});
@@ -113,7 +113,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(
+      await move.call(
         asContext(context),
         { idField: "_id" },
         "users/user1",
@@ -135,7 +135,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(
+      await move.call(
         asContext(context),
         { idField: "documentId" },
         "users/user1",
@@ -155,7 +155,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(
+      await move.call(
         asContext(context),
         { idField: "_id" },
         "users/user1",
@@ -175,7 +175,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(asContext(context), {}, "users", "archive/user1");
+      await move.call(asContext(context), {}, "users", "archive/user1");
 
       expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("must be documents"),
@@ -190,7 +190,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(asContext(context), {}, "users/user1", "archive");
+      await move.call(asContext(context), {}, "users/user1", "archive");
 
       expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("must be documents"),
@@ -203,7 +203,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(asContext(context), {}, "users", "archive");
+      await move.call(asContext(context), {}, "users", "archive");
 
       expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("must be documents"),
@@ -218,7 +218,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(
+      await move.call(
         asContext(context),
         {},
         "users/nonexistent",
@@ -240,7 +240,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(asContext(context), {}, "users/user1", "users/user2");
+      await move.call(asContext(context), {}, "users/user1", "users/user2");
 
       expect(context.mockSpinner.promise).toHaveBeenCalledWith(
         expect.anything(),
@@ -257,7 +257,7 @@ describe("copy command", () => {
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
-      await copy.call(asContext(context), {}, "users/user1", "users/user2");
+      await move.call(asContext(context), {}, "users/user1", "users/user2");
 
       expect(context.mockSpinner.promise).toHaveBeenCalledWith(
         expect.anything(),
@@ -275,7 +275,7 @@ describe("copy command", () => {
         throw new Error("Connection failed");
       };
 
-      await copy.call(asContext(context), {}, "users/user1", "users/user2");
+      await move.call(asContext(context), {}, "users/user1", "users/user2");
 
       expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("Connection failed"),
@@ -288,7 +288,7 @@ describe("copy command", () => {
         throw "string error";
       };
 
-      await copy.call(asContext(context), {}, "users/user1", "users/user2");
+      await move.call(asContext(context), {}, "users/user1", "users/user2");
 
       expect(context.mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining("unexpected error"),

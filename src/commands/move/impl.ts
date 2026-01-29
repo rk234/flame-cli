@@ -40,7 +40,7 @@ export default async function move(
           transaction.set(db.doc(destination), existingDoc.data());
         }
 
-        transaction.delete(db.doc(source));
+        if (source !== destination) transaction.delete(db.doc(source));
       }),
       {
         text: `Moving document from ${source} to ${destination}...`,
@@ -48,7 +48,7 @@ export default async function move(
       },
     );
 
-    logger.success(`Copied document ${source} to ${destination}!`);
+    logger.success(`Moved document ${source} to ${destination}!`);
   } catch (error) {
     if (error instanceof Error) {
       logger.error(`Failed to move: ${error.message}`);
