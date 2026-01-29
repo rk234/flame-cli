@@ -30,6 +30,6 @@ export const moveCommand = buildCommand({
     },
   },
   docs: {
-    brief: "Copy a document to the specified path",
+    brief: "Move a document to the specified path",
   },
 });
