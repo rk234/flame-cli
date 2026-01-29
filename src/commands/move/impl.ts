@@ -1,13 +1,13 @@
 import type { LocalContext } from "../../context";
 import { documentId, isDocumentPath } from "../../utils/firestorePath";
 
-interface CopyFlags {
+interface MoveFlags {
   idField?: string;
 }
 
-export default async function copy(
+export default async function move(
   this: LocalContext,
-  flags: CopyFlags,
+  flags: MoveFlags,
   source: string,
   destination: string,
 ) {
@@ -39,17 +39,19 @@ export default async function copy(
         } else {
           transaction.set(db.doc(destination), existingDoc.data());
         }
+
+        transaction.delete(db.doc(source));
       }),
       {
-        text: `Copying document from ${source} to ${destination}...`,
-        successText: `Copy successful!`,
+        text: `Moving document from ${source} to ${destination}...`,
+        successText: `Move successful!`,
       },
     );
 
     logger.success(`Copied document ${source} to ${destination}!`);
   } catch (error) {
     if (error instanceof Error) {
-      logger.error(`Failed to copy: ${error.message}`);
+      logger.error(`Failed to move: ${error.message}`);
     } else {
       logger.error("An unexpected error occurred");
     }

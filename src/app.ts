@@ -13,6 +13,7 @@ import { useCommand } from "./commands/use/command";
 import chalk from "chalk";
 import { collectionsCommand } from "./commands/collections/command";
 import { copyCommand } from "./commands/copy/command";
+import { moveCommand } from "./commands/move/command";
 
 const routes = buildRouteMap({
   routes: {
@@ -25,6 +26,8 @@ const routes = buildRouteMap({
     rm: deleteCommand,
     copy: copyCommand,
     cp: copyCommand,
+    move: moveCommand,
+    mv: moveCommand,
     collections: collectionsCommand,
     install: buildInstallCommand("flame", {
       bash: "__flame_bash_complete",
