@@ -55,6 +55,12 @@ flame down users/user1
 # Download all documents from a collection
 flame down users
 
+# Copy a document
+flame copy users/user1 users/user2
+
+# Move a document (transactional, source is deleted only if destination is successful)
+flame move users/user1 archive/userX
+
 # Delete a document
 flame delete users/user1
 
@@ -81,6 +87,7 @@ See [Commands Documentation](docs/commands.md) for detailed usage of all command
 | `flame up <path>`         | Upload documents to Firestore                      |
 | `flame delete <path>`     | Delete documents or collections (alias: `rm`)      |
 | `flame copy <src> <dest>` | Copy a document to a new path (alias: `cp`)        |
+| `flame move <src> <dest>` | Move a document to a new path (alias: `mv`)        |
 | `flame collections`       | List all collections                               |
 
 ## Configuration

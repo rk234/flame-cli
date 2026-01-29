@@ -148,6 +148,28 @@ flame cp users/user1 users/user2
 |------|-------------|
 | `--idField <field>` | Add the destination document ID as a field in the copied document |
 
+---
+
+## `flame move <source> <destination>`
+
+Move a document to a new path. Both source and destination must be document paths.
+
+```bash
+# Move a document to a new location
+flame move users/user1 archive/user1
+
+# Move and add the new ID as a field
+flame move users/user1 archive/user1 --idField="archivedId"
+
+# Move and overwrite fields safely
+flame move users/user1 users/user2
+```
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--idField <field>` | Add the destination document ID as a field in the moved document |
+
 ## `flame collections`
 
 List all root-level collections in the Firestore database.
