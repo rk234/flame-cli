@@ -4,7 +4,7 @@
   "description": "A simple CLI to interact with Firestore databases",
   "license": "MIT",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "files": [
     "dist"
   ],
