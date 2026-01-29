@@ -122,6 +122,32 @@ flame rm users/user1/orders --force
 
 **Warning:** Deleting a collection will delete ALL documents within it. This operation cannot be undone.
 
+## `flame copy <source> <destination>` (alias: `cp`)
+
+Copy a document to a new path. Both source and destination must be document paths.
+
+```bash
+# Copy a document to a new path
+flame copy users/user1 users/user2
+
+# Copy to a different collection
+flame copy users/user1 archive/user1
+
+# Copy nested documents
+flame copy users/user1/orders/order1 users/user1/orders/order2
+
+# Add the new document ID as a field in the copied document
+flame copy users/user1 users/user2 --idField="_id"
+
+# Using the cp alias
+flame cp users/user1 users/user2
+```
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--idField <field>` | Add the destination document ID as a field in the copied document |
+
 ## `flame collections`
 
 List all root-level collections in the Firestore database.

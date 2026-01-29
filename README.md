@@ -72,15 +72,16 @@ flame use remote
 
 See [Commands Documentation](docs/commands.md) for detailed usage of all commands.
 
-| Command               | Description                                        |
-| --------------------- | -------------------------------------------------- |
-| `flame init`          | Initialize flame for current Firebase project      |
-| `flame status`        | Display flame configuration status                 |
-| `flame use <target>`  | Switch between remote Firestore and local emulator |
-| `flame down <path>`   | Download/display documents from Firestore          |
-| `flame up <path>`     | Upload documents to Firestore                      |
-| `flame delete <path>` | Delete documents or collections (alias: `rm`)      |
-| `flame collections`   | List all collections                               |
+| Command                   | Description                                        |
+| ------------------------- | -------------------------------------------------- |
+| `flame init`              | Initialize flame for current Firebase project      |
+| `flame status`            | Display flame configuration status                 |
+| `flame use <target>`      | Switch between remote Firestore and local emulator |
+| `flame down <path>`       | Download/display documents from Firestore          |
+| `flame up <path>`         | Upload documents to Firestore                      |
+| `flame delete <path>`     | Delete documents or collections (alias: `rm`)      |
+| `flame copy <src> <dest>` | Copy a document to a new path (alias: `cp`)        |
+| `flame collections`       | List all collections                               |
 
 ## Configuration
 
