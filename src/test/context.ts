@@ -186,6 +186,7 @@ export function createMockFirestore(mockData: Record<string, unknown> = {}) {
     [];
   const addCalls: Array<{ collection: string; data: unknown }> = [];
   const deleteCalls: Array<{ path: string }> = [];
+  const transactionCalls: Array<() => Promise<void>> = [];
 
   const mockDocSet = vi.fn(async (data: unknown, options?: unknown) => {
     return {
@@ -215,6 +216,7 @@ export function createMockFirestore(mockData: Record<string, unknown> = {}) {
       });
 
       return {
+        _path: path,
         get: vi.fn(async () => {
           const data = mockData[path];
           return {
@@ -227,6 +229,33 @@ export function createMockFirestore(mockData: Record<string, unknown> = {}) {
         update: vi.fn(),
         delete: docDelete,
       };
+    }),
+    runTransaction: vi.fn(async (updateFunction) => {
+      const mockTransaction = {
+        get: vi.fn(async (docRef: any) => {
+          const path = docRef._path || "unknown";
+          const data = mockData[path];
+          return {
+            exists: data !== undefined,
+            id: path.split("/").pop(),
+            data: () => data,
+          };
+        }),
+        set: vi.fn(async (docRef: any, data: unknown, options?: unknown) => {
+          const path = docRef._path || "unknown";
+          setCalls.push({ path, data, options });
+        }),
+        delete: vi.fn(async (docRef: any) => {
+          const path = docRef._path || "unknown";
+          deleteCalls.push({ path });
+        }),
+      };
+
+      transactionCalls.push(() => updateFunction(mockTransaction));
+      const lastCall = transactionCalls[transactionCalls.length - 1];
+      if (lastCall) {
+        await lastCall();
+      }
     }),
     collection: vi.fn((collectionPath: string) => {
       const collectionAdd = vi.fn(async (data: unknown) => {

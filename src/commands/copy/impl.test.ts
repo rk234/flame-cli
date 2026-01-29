@@ -16,15 +16,35 @@ describe("copy command", () => {
   });
 
   describe("successful copy", () => {
-    it("copies a document to a new path", async () => {
+    it("does not write if transaction fails (atomicity)", async () => {
       const mockFirestore = createMockFirestore({
-        "users/user1": { name: "John", email: "john@example.com" },
+        "users/user1": { name: "FailureTest" },
+      });
+      // Simulate failure by monkeypatching runTransaction to throw
+      mockFirestore.runTransaction = vi.fn(async () => {
+        throw new Error("Artificial txn fail");
       });
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
       await copy.call(asContext(context), {}, "users/user1", "users/user2");
 
+      expect(mockFirestore._setCalls).toHaveLength(0);
+      expect(context.mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining("Artificial txn fail"),
+      );
+    });
+    it("copies a document to a new path", async () => {
+      const mockFirestore = createMockFirestore({
+        "users/user1": { name: "John", email: "john@example.com" },
+      });
+      const spyRunTransaction = vi.spyOn(mockFirestore, "runTransaction");
+      const context = buildTestContext();
+      context.getFirestore = () => mockFirestore;
+
+      await copy.call(asContext(context), {}, "users/user1", "users/user2");
+
+      expect(mockFirestore.runTransaction).toHaveBeenCalled();
       expect(mockFirestore._setCalls).toHaveLength(1);
       expect(mockFirestore._setCalls[0]!.path).toBe("users/user2");
       expect(mockFirestore._setCalls[0]!.data).toEqual({
@@ -233,7 +253,7 @@ describe("copy command", () => {
   });
 
   describe("spinner integration", () => {
-    it("uses spinner for fetching source document", async () => {
+    it("uses spinner for the operation with correct text", async () => {
       const mockFirestore = createMockFirestore({
         "users/user1": { name: "John" },
       });
@@ -242,10 +262,13 @@ describe("copy command", () => {
 
       await copy.call(asContext(context), {}, "users/user1", "users/user2");
 
+      expect(context.mockSpinner.promise).toHaveBeenCalledTimes(1);
       expect(context.mockSpinner.promise).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
-          text: expect.stringContaining("Fetching"),
+          text: expect.stringContaining(
+            "Copying document from users/user1 to users/user2",
+          ),
         }),
       );
     });

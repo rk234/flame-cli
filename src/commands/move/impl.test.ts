@@ -16,15 +16,33 @@ describe("copy command", () => {
   });
 
   describe("successful copy", () => {
+    it("does not copy or delete if transaction fails (atomicity)", async () => {
+      const mockFirestore = createMockFirestore({
+        "users/user1": { name: "FailureTest" },
+      });
+      mockFirestore.runTransaction = vi.fn(async () => {
+        throw new Error("Artificial txn fail");
+      });
+      const context = buildTestContext();
+      context.getFirestore = () => mockFirestore;
+      await move.call(asContext(context), {}, "users/user1", "users/user2");
+      expect(mockFirestore._setCalls).toHaveLength(0);
+      expect(mockFirestore._deleteCalls).toHaveLength(0);
+      expect(context.mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining("Artificial txn fail"),
+      );
+    });
     it("copies a document to a new path", async () => {
       const mockFirestore = createMockFirestore({
         "users/user1": { name: "John", email: "john@example.com" },
       });
+      const spyRunTransaction = vi.spyOn(mockFirestore, "runTransaction");
       const context = buildTestContext();
       context.getFirestore = () => mockFirestore;
 
       await move.call(asContext(context), {}, "users/user1", "users/user2");
 
+      expect(mockFirestore.runTransaction).toHaveBeenCalled();
       expect(mockFirestore._setCalls).toHaveLength(1);
       expect(mockFirestore._setCalls[0]!.path).toBe("users/user2");
       expect(mockFirestore._setCalls[0]!.data).toEqual({
@@ -245,7 +263,7 @@ describe("copy command", () => {
       expect(context.mockSpinner.promise).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
-          text: expect.stringContaining("Fetching"),
+          text: expect.stringContaining("Moving document from"),
         }),
       );
     });
@@ -262,7 +280,7 @@ describe("copy command", () => {
       expect(context.mockSpinner.promise).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
-          text: expect.stringContaining("Copying"),
+          text: expect.stringContaining("Moving document from"),
         }),
       );
     });
