@@ -54,27 +54,23 @@ jobs:
 
       - name: Generate release notes
         if: steps.check_release.outputs.exists == 'false'
-        id: notes
         run: |
           TAG="v${{ steps.pkg.outputs.version }}"
-          GENERATED=$(gh api repos/${{ github.repository }}/releases/generate-notes \
+          TARBALL_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/flame-cli-${{ steps.pkg.outputs.version }}.tgz"
+
+          gh api repos/${{ github.repository }}/releases/generate-notes \
             -f tag_name="$TAG" \
             -f target_commitish=main \
-            --jq '.body')
-          TARBALL_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/flame-cli-${{ steps.pkg.outputs.version }}.tgz"
-          BODY="${GENERATED}
+            --jq '.body' > release-notes.md
+
+          cat >> release-notes.md <<EOF
 
           ## Install
 
           \`\`\`bash
           npm install -g ${TARBALL_URL}
-          \`\`\`"
-
-          {
-            echo "body<<RELEASE_NOTES_EOF"
-            echo "$BODY"
-            echo "RELEASE_NOTES_EOF"
-          } >> "$GITHUB_OUTPUT"
+          \`\`\`
+          EOF
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -85,6 +81,6 @@ jobs:
           gh release create "$TAG" \
             flame-cli-${{ steps.pkg.outputs.version }}.tgz \
             --title "$TAG" \
-            --notes "${{ steps.notes.outputs.body }}"
+            --notes-file release-notes.md
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
