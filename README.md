@@ -13,9 +13,7 @@ A simple, developer-friendly CLI for interacting with Firebase Firestore databas
 
 ### From GitHub
 
-```bash
-npm install -g github:rk234/flame-cli
-```
+See the releases page to install the latest release.
 
 ### From Source
 
