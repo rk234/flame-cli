@@ -1,0 +1,150 @@
+library: flame-cli
+description: >
+  A developer-friendly CLI for interacting with Firebase Firestore databases.
+  Primary use cases: seeding test data to the local emulator, one-off document
+  operations, backups, and exports. Built with Stricli on Node.js >=22.
+repository: https://github.com/your-username/flame-cli
+domains:
+  - id: setup
+    name: Project Setup & Configuration
+    description: >
+      Initializing flame in a Firebase project, configuring emulator vs remote
+      mode, and setting up authentication. Developers encounter this domain
+      when first installing flame and when switching between environments.
+    concepts:
+      - .flame.json config file
+      - .firebaserc project detection
+      - firebase.json emulator settings
+      - flame init command
+      - flame use command
+      - useEmulator flag
+      - Application Default Credentials (ADC)
+      - FIRESTORE_EMULATOR_HOST env var
+      - Firebase CLI dependency for emulators
+
+  - id: data-upload
+    name: Uploading Documents
+    description: >
+      Writing documents to Firestore — single documents, collections from arrays,
+      piped stdin, merge vs overwrite. The --idField flag is the most critical
+      concept here and a common source of errors.
+    concepts:
+      - flame up command
+      - document path vs collection path (even vs odd segments)
+      - --idField flag
+      - --data flag
+      - --merge flag
+      - stdin piping
+      - array upload to collection
+      - single doc to document path
+      - single doc to collection path (requires --idField)
+      - auto-generated IDs (collection.add)
+
+  - id: data-read
+    name: Reading & Exporting Documents
+    description: >
+      Downloading documents and collections, using output for pipelines and
+      backup workflows.
+    concepts:
+      - flame down command
+      - --limit flag
+      - --docId flag (_id field inclusion)
+      - collection vs document path detection
+      - JSON output format
+      - stdout piping
+      - pipeline-friendly mode (no spinner when piping)
+
+  - id: data-management
+    name: Document Management
+    description: >
+      Copying, moving, and deleting documents. Move and copy are transactional.
+      Delete requires confirmation unless --force is used, and prominently
+      shows whether you are targeting EMULATOR or REMOTE.
+    concepts:
+      - flame delete / rm command
+      - flame copy / cp command
+      - flame move / mv command
+      - flame collections command
+      - --force flag (skip confirmation)
+      - transactional move (source deleted only if destination write succeeds)
+      - transactional copy
+      - confirmation prompt showing EMULATOR vs REMOTE target
+      - document-only constraint on copy/move
+
+path_routing:
+  rule: >
+    ALL commands that accept a path use the same routing logic:
+    even number of segments = document path, odd number = collection path.
+  examples:
+    - path: "users"
+      segments: 1
+      type: collection
+    - path: "users/abc123"
+      segments: 2
+      type: document
+    - path: "users/abc123/orders"
+      segments: 3
+      type: collection
+    - path: "users/abc123/orders/order1"
+      segments: 4
+      type: document
+
+failure_modes:
+  - id: idfield-missing-collection-upload
+    description: >
+      Uploading a single document to a collection path without --idField throws
+      "Must specify a document ID field with --idField!". Agents often omit
+      --idField when the user hasn't mentioned it.
+    severity: high
+
+  - id: array-to-document-path
+    description: >
+      Uploading a JSON array to a document path (even segments) logs an error
+      about needing --idField and a collection path. The error is silent (no
+      throw), so the command exits without writing anything.
+    severity: high
+
+  - id: wrong-environment
+    description: >
+      Running write/delete commands while targeting remote Firestore when the
+      developer intended the emulator (or vice versa). The delete command shows
+      EMULATOR/REMOTE prominently in its confirmation prompt; up/down do not.
+      Always verify with `flame status` before destructive operations against remote.
+    severity: critical
+
+  - id: adc-not-configured
+    description: >
+      Remote mode always calls applicationDefault(). If ADC is not set up
+      (`gcloud auth application-default login` not run), all commands against
+      remote will fail with a credentials error. The emulator also calls
+      applicationDefault() but the FIRESTORE_EMULATOR_HOST env var bypasses
+      actual auth checks.
+    severity: high
+
+  - id: idfield-value-undefined
+    description: >
+      If --idField is specified but the field is missing or undefined on a
+      document in the array, the command throws "Document N does not have ID
+      field X!". Every document in the array must contain the specified field.
+    severity: medium
+
+  - id: copy-move-collection-paths
+    description: >
+      flame copy and flame move only accept document paths (even segments).
+      Passing a collection path throws "Source and destination paths must be
+      documents". There is no bulk copy/move.
+    severity: medium
+
+  - id: delete-collection-not-recursive
+    description: >
+      flame delete on a collection path deletes only the direct documents in
+      that collection. Subcollections are NOT deleted. Firestore subcollection
+      documents will remain after the parent collection is cleared.
+    severity: medium
+
+  - id: firebase-project-not-found
+    description: >
+      All commands require .firebaserc and firebase.json to be present in the
+      working directory or a parent directory. Running flame outside a Firebase
+      project directory fails with "No firebaserc file found!".
+    severity: high

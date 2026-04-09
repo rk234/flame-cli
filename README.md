@@ -205,6 +205,26 @@ npm run test:watch
 npm run test:coverage
 ```
 
+## AI Agent Skills
+
+flame ships with [TanStack Intent](https://github.com/TanStack/intent) skills that give AI coding agents (Claude Code, Cursor, Copilot, etc.) accurate, task-focused guidance for using flame.
+
+If you use an AI agent, run the following in your project to install the skills:
+
+```bash
+npx @tanstack/intent@latest install
+```
+
+Skills available:
+
+| Skill                   | Description                                    |
+| ----------------------- | ---------------------------------------------- |
+| `flame-getting-started` | Init, config, emulator setup, ADC auth         |
+| `flame-upload`          | Uploading documents, `--idField`, path routing |
+| `flame-test-data`       | Seeding mock data to the Firestore emulator    |
+| `flame-backup-restore`  | Exporting and restoring collections            |
+| `flame-data-management` | Read, copy, move, delete documents             |
+
 ## Tech Stack
 
 - [Stricli](https://github.com/bloomberg/stricli) - Type-safe CLI framework

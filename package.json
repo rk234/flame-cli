@@ -1,12 +1,18 @@
 {
   "name": "flame-cli",
   "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rk234/flame-cli"
+  },
   "description": "A simple CLI to interact with Firestore databases",
   "license": "MIT",
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "files": [
-    "dist"
+    "dist",
+    "skills",
+    "!skills/_artifacts"
   ],
   "bin": {
     "flame": "dist/cli.js",
@@ -49,6 +55,7 @@
     "strip-ansi": "^7.1.2"
   },
   "devDependencies": {
+    "@tanstack/intent": "^0.0.29",
     "@types/node": "22.x",
     "@vitest/coverage-v8": "^4.0.18",
     "husky": "^9.1.7",
@@ -56,5 +63,8 @@
     "tsup": "^6.7.0",
     "typescript": "5.6.x",
     "vitest": "^4.0.18"
-  }
+  },
+  "keywords": [
+    "tanstack-intent"
+  ]
 }

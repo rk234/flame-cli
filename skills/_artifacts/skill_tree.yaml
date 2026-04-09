@@ -1,0 +1,105 @@
+library:
+  name: "flame-cli"
+  version: "0.1.1"
+  repository: "https://github.com/your-username/flame-cli"
+  description: "Developer-friendly CLI for uploading, downloading, and managing Firebase Firestore documents."
+generated_from:
+  domain_map: "skills/_artifacts/domain_map.yaml"
+  skill_spec: "skills/_artifacts/skill_spec.md"
+generated_at: "2026-04-09T00:00:00Z"
+
+# Flat structure: 5 task-focused skills, no framework adapters, no router skill.
+# Each skill is independently discoverable via `npx @tanstack/intent list`.
+
+skills:
+  - name: "flame-getting-started"
+    slug: "flame-getting-started"
+    type: "lifecycle"
+    domain: "setup"
+    path: "skills/flame-getting-started/SKILL.md"
+    description: >
+      First-time setup for flame-cli: flame init, .flame.json config, switching
+      between emulator and remote with flame use, ADC authentication for remote
+      Firestore, Firebase CLI dependency for emulators, and flame status.
+    requires: []
+    sources:
+      - "flame-cli:README.md"
+      - "flame-cli:docs/commands.md"
+      - "flame-cli:src/commands/init/impl.ts"
+      - "flame-cli:src/commands/use/impl.ts"
+      - "flame-cli:src/config/loader.ts"
+      - "flame-cli:src/services/firestore.ts"
+
+  - name: "flame-upload"
+    slug: "flame-upload"
+    type: "core"
+    domain: "data-upload"
+    path: "skills/flame-upload/SKILL.md"
+    description: >
+      Upload documents to Firestore using flame up: single documents to document
+      paths, arrays to collections with --idField, stdin/pipe input, --merge flag,
+      and path routing rules (even segments = document, odd = collection).
+    requires: []
+    sources:
+      - "flame-cli:docs/commands.md"
+      - "flame-cli:src/commands/up/impl.ts"
+      - "flame-cli:src/commands/up/command.ts"
+      - "flame-cli:src/utils/firestorePath.ts"
+
+  - name: "flame-test-data"
+    slug: "flame-test-data"
+    type: "lifecycle"
+    domain: "data-upload"
+    path: "skills/flame-test-data/SKILL.md"
+    description: >
+      Seed mock data into the Firestore emulator for development and testing:
+      full setup → seed → teardown workflow, fixture file patterns, using
+      --idField for predictable document IDs, resetting state between test runs.
+    requires:
+      - "flame-getting-started"
+      - "flame-upload"
+    sources:
+      - "flame-cli:README.md"
+      - "flame-cli:docs/commands.md"
+      - "flame-cli:src/commands/up/impl.ts"
+      - "flame-cli:src/commands/delete/impl.ts"
+
+  - name: "flame-backup-restore"
+    slug: "flame-backup-restore"
+    type: "lifecycle"
+    domain: "data-read"
+    path: "skills/flame-backup-restore/SKILL.md"
+    description: >
+      Export Firestore collections to JSON with flame down --docId and restore
+      them with flame up --idField. Pipeline patterns for backup/restore,
+      cross-environment transfers, and the --docId roundtrip requirement.
+    requires:
+      - "flame-getting-started"
+      - "flame-upload"
+    sources:
+      - "flame-cli:README.md"
+      - "flame-cli:docs/commands.md"
+      - "flame-cli:src/commands/down/impl.ts"
+      - "flame-cli:src/commands/down/command.ts"
+      - "flame-cli:src/commands/up/impl.ts"
+
+  - name: "flame-data-management"
+    slug: "flame-data-management"
+    type: "core"
+    domain: "data-management"
+    path: "skills/flame-data-management/SKILL.md"
+    description: >
+      One-off Firestore operations: flame down to read documents, flame copy/cp
+      and flame move/mv for transactional copy and move, flame delete/rm with
+      --force flag, flame collections to list root collections. Copy and move
+      require document paths (even segments only).
+    requires:
+      - "flame-getting-started"
+    sources:
+      - "flame-cli:docs/commands.md"
+      - "flame-cli:src/commands/down/impl.ts"
+      - "flame-cli:src/commands/copy/impl.ts"
+      - "flame-cli:src/commands/move/impl.ts"
+      - "flame-cli:src/commands/delete/impl.ts"
+      - "flame-cli:src/commands/collections/impl.ts"
+      - "flame-cli:src/utils/firestorePath.ts"
